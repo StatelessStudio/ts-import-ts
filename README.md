@@ -1,38 +1,120 @@
 # ts-import-ts - Readme
 
-## Development
+Load TS files when running through ts-node, but load the compiled JS files when running through node. Great for typescript applications which dynamically load files (e.g. database migrations, etc.)
 
-Run a dev test with `npm start`.
+## Installation
 
-## Running Tests
+`npm i ts-import-ts`
 
-To run unit tests, `npm run test`
+## Basic Usage
 
-## Scripts
+Create the file you would like to import. **Make sure to export default (or see section on named exports below)**
 
-You can write custom scripts in the `script/` directory. See `script/example.ts` as an example.
+`test/sample/sample.ts`
+```typescript
+export default class Sample {
+	public foo = 'bar';
+}
+```
 
-Run your script with `npm run script -- example`
+And load the file:
 
-## Compiling
+`src/index.ts`
+```typescript
+import { tsimport } from 'ts-import-ts';
 
-### Debug Builds
+const sampleClass: any = tsimport('test/sample/sample');
+const sampleObject = new sampleClass();
 
-To compile a debug build, run `npm run build`. The build output will appear in the `./dist` folder.
+console.log(foo); // Output: bar
+```
 
-### Prod Builds
+## Advanced Usage w/ Type Safety
 
-To compile a production build, run `npm run lint:prod && npm run build`. The build output will appear in the `./dist` folder.
+Pass a type parameter to `tsimport` to strongly-type the return value. In this example, tsimport will return a string `foo`.
 
-## More
+`test/sample/sample.ts`
+```typescript
+const foo: string = 'bar';
+export default foo;
+```
 
-### Generating Docs
+`src/index.ts`
+```typescript
+import { tsimport } from 'ts-import-ts';
 
-`npm run doc` and browse docs/index.html!
+const sampleFoo = tsimport<string>('test/sample/sample');
+console.log(sampleFoo); // Output: bar
+```
 
-### Deploying to npm
+## Advanced Usage w/ Inheritance
 
-1. Did you bump your version?
-2. `npm run publish`
+Create a base-class: 
 
-You can test your build by running `npm run script -- pack`
+`src/cool-file.ts`
+```typescript
+export class CoolFile {
+	foo: string;
+}
+```
+
+Extend the class in the files you'd like to load:
+
+`cool-files/first.ts`
+```typescript
+import { CoolFile } from '../src/cool-file';
+
+export class FirstCoolFile extends CoolFile {
+	foo = 'bar';
+}
+```
+
+Load the files, typing the import as `typeof CoolFile`:
+
+`src/index.ts`
+```typescript
+import { tsimport } from 'ts-import-ts';
+import { CoolFile } from './cool-file';
+
+const loaded = tsimport<typeof CoolFile>('cool-files/first');
+const sampleObject = new sampleClass();
+
+console.log(sampleObject.foo); // Output: bar
+```
+
+## Named Imports
+
+If a file outputs multiple things, or you don't want to `export default`, you may pass a name to import as the second argument:
+
+`test/sample/sample.ts`
+```typescript
+export const foo = 'bar';
+```
+
+`src/index.ts`
+```typescript
+import { tsimport } from 'ts-import-ts';
+
+tsimport('test/sample/sample', 'foo');
+```
+
+## Import All 
+
+Pass null as a second argument to load an object with all exported things:
+
+`test/sample/sample.ts`
+```typescript
+export const foo = 'bar';
+export const baz = 'buzz';
+```
+
+`src/index.ts`
+```typescript
+import { tsimport } from 'ts-import-ts';
+
+const imported = tsimport('test/sample/sample');
+
+console.log(imported) // Ouptut: { foo: 'bar', baz: 'buzz' }
+
+```
+

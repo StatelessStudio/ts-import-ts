@@ -1,4 +1,4 @@
-# {{project-name}} - Readme
+# ts-import-ts - Readme
 
 ## Development
 

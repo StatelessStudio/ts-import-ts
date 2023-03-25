@@ -1,7 +1,7 @@
 {
-	"name": "{{project-name}}",
+	"name": "ts-import-ts",
 	"version": "1.0.0",
-	"description": "{{project-name}}",
+	"description": "ts-import-ts",
 	"private": "true",
 	"typescript-template": {
 		"base": "1.0.0",
@@ -42,13 +42,13 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/{{project-org}}/{{project-name}}.git"
+		"url": "git+https://github.com/ts-import-ts/ts-import-ts.git"
 	},
-	"author": "{{project-org}}",
+	"author": "ts-import-ts",
 	"license": "MIT",
 	"bugs": {
-		"url": "https://github.com/{{project-org}}/{{project-name}}/issues"
+		"url": "https://github.com/ts-import-ts/ts-import-ts/issues"
 	},
-	"homepage": "https://github.com/{{project-org}}/{{project-name}}#readme",
+	"homepage": "https://github.com/ts-import-ts/ts-import-ts#readme",
 	"keywords": []
 }

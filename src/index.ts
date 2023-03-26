@@ -1,4 +1,5 @@
 import { join as joinPath } from 'path';
+import { readdirSync } from 'fs';
 
 let isDevMode;
 
@@ -6,6 +7,21 @@ let isDevMode;
 // @ts-ignore
 if (process[Symbol.for('ts-node.register.instance')]) {
 	isDevMode = true;
+}
+
+export function getPath(file: string): string {
+	const wd = process.cwd();
+	const distDir = process.env.TS_DIST_DIR ?? 'dist';
+
+	if (isDevMode) {
+		file = joinPath(wd, file);
+	}
+	else {
+		file = file.replace('.ts', '.js');
+		file = joinPath(wd, distDir, file);
+	}
+
+	return file;
 }
 
 /**
@@ -22,16 +38,7 @@ if (process[Symbol.for('ts-node.register.instance')]) {
  * @returns Returns the default export
  */
 export function tsimport<T>(file: string, name: null | string = 'default'): T {
-	const wd = process.cwd();
-	const distDir = process.env.TS_DIST_DIR ?? 'dist';
-
-	if (isDevMode) {
-		file = joinPath(wd, file);
-	}
-	else {
-		file = file.replace('.ts', '.js');
-		file = joinPath(wd, distDir, file);
-	}
+	file = getPath(file);
 
 	let module;
 
@@ -52,4 +59,27 @@ export function tsimport<T>(file: string, name: null | string = 'default'): T {
 	}
 
 	return module[name];
+}
+
+/**
+ * Import all files in a directory dynamically.
+ *
+ * See notes on `tsimport()` for description.
+ *
+ * @param dir Relative directory to import files from. Files should have
+ * 	a .ts or .js extension (depending on if built)
+ * @param name (Optional) Export name to return (Defaults to default export).
+ * 	Set to null to return all parts of import
+ * @returns Returns an array of loaded files
+ */
+export function tsimportDirectory<T>(
+	dir: string,
+	name: null | string = 'default'
+): T[] {
+	const files = readdirSync(getPath(dir)).filter((filename) =>
+		filename.includes('.')
+	);
+	const results = files.map((file) => tsimport<T>(joinPath(dir, file), name));
+
+	return results;
 }

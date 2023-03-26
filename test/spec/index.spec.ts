@@ -1,5 +1,5 @@
 import 'jasmine';
-import { tsimport } from '../../src';
+import { tsimport, tsimportDirectory } from '../../src';
 import Sample from '../sample/sample';
 
 describe('ts-import-ts', () => {
@@ -21,5 +21,14 @@ describe('ts-import-ts', () => {
 			foo: 'bar',
 			baz: 'buzz',
 		});
+	});
+
+	it('can import a directory', () => {
+		const files = tsimportDirectory<string>('test/sample-dir');
+
+		expect(Array.isArray(files)).toBeTrue();
+		expect(files.length).toEqual(2);
+		expect(files[0]).toEqual('foo');
+		expect(files[1]).toEqual('bar');
 	});
 });

@@ -76,9 +76,14 @@ export function tsimportDirectory<T>(
 	dir: string,
 	name: null | string = 'default'
 ): T[] {
-	const files = readdirSync(getPath(dir)).filter((filename) =>
-		filename.includes('.')
-	);
+	const actualPath = getPath(dir);
+	const extension = isDevMode ? '.ts' : '.js';
+	const isTypeDefinition = (filename) => filename.endsWith('.d.ts');
+	const isSourceCodeFile = (filename) =>
+		filename.endsWith(extension) &&
+		!isTypeDefinition(filename);
+
+	const files = readdirSync(actualPath).filter(isSourceCodeFile);
 	const results = files.map((file) => tsimport<T>(joinPath(dir, file), name));
 
 	return results;

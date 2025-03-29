@@ -17,7 +17,12 @@ describe('ts-import-ts', () => {
 	});
 
 	it('can use null-named imports', () => {
-		expect(tsimport<any>('test/sample/named-exports', null)).toEqual({
+		const imported = tsimport<Record<string, string>>(
+			'test/sample/named-exports',
+			null
+		);
+
+		expect(imported).toEqual({
 			foo: 'bar',
 			baz: 'buzz',
 		});

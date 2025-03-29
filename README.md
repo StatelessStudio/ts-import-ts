@@ -26,12 +26,12 @@ import { tsimport } from 'ts-import-ts';
 const sampleClass: any = tsimport('test/sample/sample');
 const sampleObject = new sampleClass();
 
-console.log(foo); // Output: bar
+console.log(sampleObject.foo); // Output: bar
 ```
 
 ## Advanced Usage w/ Type Safety
 
-Pass a type parameter to `tsimport` to strongly-type the return value. In this example, tsimport will return a string `foo`.
+Pass a type parameter to `tsimport` to strongly-type the return value. In this example, tsimport will return `foo`.
 
 `test/sample/sample.ts`
 ```typescript
@@ -43,6 +43,7 @@ export default foo;
 ```typescript
 import { tsimport } from 'ts-import-ts';
 
+// Importing and typing the return value as a string
 const sampleFoo = tsimport<string>('test/sample/sample');
 console.log(sampleFoo); // Output: bar
 ```
@@ -77,7 +78,7 @@ import { tsimport } from 'ts-import-ts';
 import { CoolFile } from './cool-file';
 
 const loaded = tsimport<typeof CoolFile>('cool-files/first');
-const sampleObject = new sampleClass();
+const sampleObject = new loaded();
 
 console.log(sampleObject.foo); // Output: bar
 ```
@@ -95,7 +96,9 @@ export const foo = 'bar';
 ```typescript
 import { tsimport } from 'ts-import-ts';
 
-tsimport('test/sample/sample', 'foo');
+// Importing a named export
+const namedImport = tsimport('test/sample/sample', 'foo');
+console.log(namedImport); // Output: bar
 ```
 
 ## Import All 
@@ -112,10 +115,9 @@ export const baz = 'buzz';
 ```typescript
 import { tsimport } from 'ts-import-ts';
 
-const imported = tsimport('test/sample/sample');
+const imported = tsimport('test/sample/sample', null);
 
-console.log(imported) // Ouptut: { foo: 'bar', baz: 'buzz' }
-
+console.log(imported) // Output: { foo: 'bar', baz: 'buzz' }
 ```
 
 ## Contributing & Development
